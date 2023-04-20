@@ -8,7 +8,7 @@ import {
 import { redisClient } from '../utils/redisClient';
 
 export async function getOnePost(req: Request, res: Response) {
-  const data = await findPost({ __id: req.params.id });
+  const data = await findPost({ __id: req.params.postId });
   res.status(200).json({
     message: 'single post',
     data,
@@ -33,7 +33,7 @@ export async function getAllPost(req: Request, res: Response) {
 }
 
 export async function deleteOnePost(req: Request, res: Response) {
-  const data = await deletePost({ _id: req.params.id });
+  const data = await deletePost({ _id: req.params.postId });
   await redisClient.del('Posts');
 
   res.status(200).json({

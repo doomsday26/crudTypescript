@@ -17,5 +17,5 @@ app.get('/', (req, res) => {
 app.listen(port, async () => {
   await mongoose.connect(`${process.env.MONGO_URL}`);
   await redisClient.connect();
-  // console.log('server is running at port number 3000')
+  console.log('server is running at port number 3000,redis connected')
 });
