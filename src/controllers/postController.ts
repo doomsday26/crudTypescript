@@ -1,14 +1,17 @@
 import { Request, Response } from 'express';
 import {
   createPost,
-  findAndUpdate,
-  findPost,
+  findAndUpdatePost,
+  findPostById,
   deletePost,
+  getAllPosts,
 } from '../services/postServices';
 import { redisClient } from '../utils/redisClient';
+import { Types } from 'mongoose';
 
 export async function getOnePost(req: Request, res: Response) {
-  const data = await findPost({ __id: req.params.postId });
+  console.log(req.params.postId)
+  const data = await findPostById(new Types.ObjectId(req.params.postId));
   res.status(200).json({
     message: 'single post',
     data,
@@ -24,7 +27,9 @@ export async function getAllPost(req: Request, res: Response) {
     });
     return;
   }
-  const data = await findPost({});
+  const limit = 5
+  const skip = 0
+  const data = await getAllPosts(limit, skip);
   await redisClient.set('Posts', JSON.stringify(data));
   res.status(200).json({
     message: 'all posts',
@@ -33,18 +38,19 @@ export async function getAllPost(req: Request, res: Response) {
 }
 
 export async function deleteOnePost(req: Request, res: Response) {
-  const data = await deletePost({ _id: req.params.postId });
+  const data = await deletePost(new Types.ObjectId(req.params.postId));
   await redisClient.del('Posts');
 
   res.status(200).json({
     message: 'deleted the post',
-    data,
+    data
   });
 }
 
 export async function createOnePost(req: Request, res: Response) {
-  const { postAbout, postText } = req.body;
+  const { authorId, postAbout, postText } = req.body;
   const post = await createPost({
+    authorId,
     postAbout,
     postText,
   });
@@ -53,8 +59,8 @@ export async function createOnePost(req: Request, res: Response) {
 }
 
 export async function updateOnePost(req: Request, res: Response) {
-  const data = await findAndUpdate(
-    { _id: req.params.postId },
+  const data = await findAndUpdatePost(
+    new Types.ObjectId(req.params.postId),
     { postAbout: req.body.postAbout, postText: req.body.postText }
   );
   await redisClient.del('Posts');

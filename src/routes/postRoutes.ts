@@ -3,7 +3,7 @@ import {
   deleteOrFetch,
   postValidationRules,
   updatePostRules,
-  validate,
+  validatePost as validate,
 } from '../utils/utilityValidator';
 const Router = express.Router();
 import {
@@ -14,10 +14,10 @@ import {
   getAllPost,
 } from '../controllers/postController';
 Router.get('/allPosts', getAllPost);
-Router.get('/onePost/:postId', deleteOrFetch(), validate, getOnePost);
-Router.put('/update/:postId', updatePostRules(), validate, updateOnePost);
-Router.post('/create', postValidationRules(), validate, createOnePost);
-Router.delete('/deletePost/:postId', deleteOrFetch(), validate, deleteOnePost);
+Router.get('/onePost/:postId', [...deleteOrFetch], validate, getOnePost);
+Router.put('/update/:postId', [...updatePostRules], validate, updateOnePost);
+Router.post('/create', [...postValidationRules], validate, createOnePost);
+Router.delete('/deletePost/:postId', [...deleteOrFetch], validate, deleteOnePost);
 
 Router.get('/about', (req: Request, res: Response) => {
   res.json({ data: 'about page' });

@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import { Router } from './routes/routes';
+import { Router as postRouter } from './routes/postRoutes';
+import { Router as authorRouter } from './routes/authorroutes'
 import { redisClient } from './utils/redisClient';
 import { errorHandler } from './utils/globalError';
 import dotenv from 'dotenv';
@@ -10,7 +11,8 @@ const port = process.env.PORT || 3000;
 app.use(errorHandler);
 
 app.use(express.json());
-app.use(Router);
+app.use('/post', postRouter);
+app.use('/author', authorRouter);
 app.get('/', (req, res) => {
   res.send('this is homepage');
 });
